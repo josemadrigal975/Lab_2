@@ -1,0 +1,2 @@
+# Lab_2
+Lab_2_BDA_NO_SQL_REDIS_&amp;_NEO4J
