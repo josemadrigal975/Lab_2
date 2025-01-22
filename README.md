@@ -15,13 +15,41 @@ Se necesita de tener instalado los siguientes componentes:
 - `pip` para instalar dependencias de Python.
 - Crear la conexión entre Redis, Neo4j con Python.
 - [Redis](https://redis.io/es/)
+- Extrae los archivos descargados en una carpeta de tu elección, por ejemplo, C:\Redis.
+- Abre una terminal y navega al directorio donde extrajiste Redis:
+  bash
+  cd C:\Redis  
+- Inicia el servidor Redis ejecutando:
+  bash
+  redis-server    
+- Esto iniciará Redis en el puerto predeterminado 6379.
+- En otra terminal, escribe:
+  bash
+  redis-cli ping
+-Si Redis está funcionando correctamente, debería responder:
+  bash
+  PONG
 
-Script de pruebas de Neo4j con Python
 
-[from neo4j import GraphDatabase
-import time
+Script de pruebas de Neo4j con Python.
 
-class Neo4jCRUD:
+Antes de iniciar las pruebas con, se debe realizar el archivo docker para una instalación e inicio de sesión de una forma más sencilla.
+
+    version: '3.8'
+    services:
+      neo4j:
+        image: neo4j:latest
+        container_name: neo4j
+        ports:
+          - "7474:7474"  # Para la interfaz web
+          - "7687:7687"  # Para el protocolo Bolt
+        environment:
+          - NEO4J_AUTH=neo4j/password  # Usuario: "Elija_usuario", Contraseña: "Elija_contraseña"
+    from neo4j import GraphDatabase
+    import time
+Luego de esto, se debe ejecutar en el símbolo del sistema con cd y la ruta del archivo.
+
+    class Neo4jCRUD:
     def __init__(self, uri, user, password):
         self.driver = GraphDatabase.driver(uri, auth=(user, password))
 
@@ -62,7 +90,7 @@ class Neo4jCRUD:
         return time.time() - start_time
 
 
-if __name__ == "__main__":
+    if __name__ == "__main__":
     uri = "bolt://localhost:7687"
     user = "neo4j"
     password = "password"
@@ -91,9 +119,9 @@ if __name__ == "__main__":
 
 Script de pruebas de Redis con Python
 
-import redis
+    import redis
 
-def insertar_datos():
+    def insertar_datos():
     r = redis.Redis(host='localhost', port=6379)
 
     for i in range(10000):
@@ -103,12 +131,12 @@ def insertar_datos():
 
     print("Se han insertado 10,000 registros en Redis.")
 
-if __name__ == "__main__":
+    if __name__ == "__main__":
     insertar_datos()
 
-import redis
+    import redis
 
-def insertar_datos():
+    def insertar_datos():
     r = redis.Redis(host='localhost', port=6379)
 
     for i in range(10000):
@@ -118,7 +146,7 @@ def insertar_datos():
 
     print("Se han insertado 10,000 registros en Redis.")
 
-if __name__ == "__main__":
+    if __name__ == "__main__":
     insertar_datos()
 
 
