@@ -14,10 +14,11 @@ Se necesita de tener instalado los siguientes componentes:
 - [Neo4j](https://neo4j.com/)
 - `pip` para instalar dependencias de Python.
 - Crear la conexión entre Redis, Neo4j con Python.
+- [Redis](https://redis.io/es/)
 
 Script de pruebas de Neo4j con Python
 
-from neo4j import GraphDatabase
+[from neo4j import GraphDatabase
 import time
 
 class Neo4jCRUD:
@@ -87,5 +88,38 @@ if __name__ == "__main__":
     print(f"Delete time: {delete_time:.2f} seconds")
 
     db.close()
+
+Script de pruebas de Redis con Python
+
+import redis
+
+def insertar_datos():
+    r = redis.Redis(host='localhost', port=6379)
+
+    for i in range(10000):
+        clave = f"usuario:{i}"
+        valor = {"nombre": f"Usuario{i}", "edad": i % 100, "ciudad": f"Ciudad{i % 50}"}
+        r.set(clave, str(valor))
+
+    print("Se han insertado 10,000 registros en Redis.")
+
+if __name__ == "__main__":
+    insertar_datos()
+
+import redis
+
+def insertar_datos():
+    r = redis.Redis(host='localhost', port=6379)
+
+    for i in range(10000):
+        clave = f"usuario:{i}"
+        valor = {"nombre": f"Usuario{i}", "edad": i % 100, "ciudad": f"Ciudad{i % 50}"}
+        r.set(clave, str(valor))
+
+    print("Se han insertado 10,000 registros en Redis.")
+
+if __name__ == "__main__":
+    insertar_datos()
+
 
 
