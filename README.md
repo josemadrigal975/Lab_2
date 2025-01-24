@@ -149,5 +149,77 @@ Script de pruebas de Redis con Python
     if __name__ == "__main__":
     insertar_datos()
 
+    import time
+    import redis
+
+    def medir_tiempo(func):
+    """
+    Decorador para medir el tiempo de ejecución y calcular latencia promedio y rendimiento.
+    """
+    def wrapper(*args, **kwargs):
+        inicio = time.time()
+        resultado = func(*args, **kwargs)
+        fin = time.time()
+        total_operaciones = kwargs.get("total", 10000)  # Número total de operaciones por defecto
+        tiempo_total = fin - inicio
+        latencia_promedio = tiempo_total / total_operaciones
+        rendimiento = total_operaciones / tiempo_total
+        print(f"{func._name_} tomó {tiempo_total:.4f} segundos")
+        print(f"Latencia promedio: {latencia_promedio:.6f} segundos/operación")
+        print(f"Rendimiento: {rendimiento:.2f} operaciones/segundo")
+        return resultado
+    return wrapper
+
+    @medir_tiempo
+    def prueba_crear(r, total=10000):
+    """
+    Inserta total registros en Redis.
+    """
+    for i in range(total):
+        clave = f"usuario:{i}"
+        valor = {"nombre": f"Usuario{i}", "edad": i % 100, "ciudad": f"Ciudad{i % 50}"}
+        r.set(clave, str(valor))
+
+    @medir_tiempo
+    def prueba_leer(r, total=10000):
+    """
+    Lee total registros de Redis y verifica consistencia.
+    """
+    consistentes = True
+    for i in range(total):
+        clave = f"usuario:{i}"
+        valor = r.get(clave)
+        esperado = str({"nombre": f"Usuario{i}", "edad": i % 100, "ciudad": f"Ciudad{i % 50}"})
+        if valor is None or valor.decode() != esperado:
+            consistentes = False
+    print(f"Consistencia de lectura: {'Correcta' if consistentes else 'Fallida'}")
+
+    @medir_tiempo
+    def prueba_actualizar(r, total=10000):
+    """
+    Actualiza total registros en Redis.
+    """
+    for i in range(total):
+        clave = f"usuario:{i}"
+        valor = {"nombre": f"UsuarioActualizado{i}", "edad": (i % 100) + 1, "ciudad": f"CiudadActualizada{i % 50}"}
+        r.set(clave, str(valor))
+
+    @medir_tiempo
+    def prueba_eliminar(r, total=10000):
+    """
+    Elimina total registros de Redis.
+    """
+    for i in range(total):
+        clave = f"usuario:{i}"
+        r.delete(clave)
+
+    if _name_ == "_main_":
+    r = redis.Redis(host='localhost', port=6379)
+
+    print("Ejecutando pruebas de rendimiento...")
+    prueba_crear(r, total=10000)   # Inserta 10,000 registros
+    prueba_leer(r, total=10000)    # Lee 1,000 registros
+    prueba_actualizar(r, total=10000)  # Actualiza 5,000 registros
+    prueba_eliminar(r, total=10000)    # Elimina 5,000 registros
 
 
